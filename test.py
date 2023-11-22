@@ -11,28 +11,31 @@ from torch.utils.data import DataLoader
 from data import knifeDataset
 import timm
 from utils import *
+
 warnings.filterwarnings('ignore')
 
+
 # Validating the model
-def evaluate(val_loader,model):
+def evaluate(val_loader, model):
     model.cuda()
     model.eval()
-    model.training=False
+    model.training = False
     map = AverageMeter()
     with torch.no_grad():
-        for i, (images,target,fnames) in enumerate(val_loader):
+        for i, (images, target, fnames) in enumerate(val_loader):
             img = images.cuda(non_blocking=True)
             label = target.cuda(non_blocking=True)
-            
+
             with torch.cuda.amp.autocast():
                 logits = model(img)
                 preds = logits.softmax(1)
-            
+
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
-            map.update(valid_map5,img.size(0))
+            map.update(valid_map5, img.size(0))
     return map.avg
 
-## Computing the mean average precision, accuracy 
+
+## Computing the mean average precision, accuracy
 def map_accuracy(probs, truth, k=5):
     with torch.no_grad():
         value, top = probs.topk(k, dim=1, largest=True, sorted=True)
@@ -48,22 +51,21 @@ def map_accuracy(probs, truth, k=5):
         acc5 = accs[1]
         return map5, acc1, acc5
 
+
 ######################## load file and get splits #############################
 print('reading test file')
 test_files = pd.read_csv("test.csv")
 print('Creating test dataloader')
-test_gen = knifeDataset(test_files,mode="val")
-test_loader = DataLoader(test_gen,batch_size=64,shuffle=False,pin_memory=True,num_workers=8)
+test_gen = knifeDataset(test_files, mode="val")
+test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True, num_workers=8)
 
 print('loading trained model')
-model = timm.create_model('tf_efficientnet_b0', pretrained=True,num_classes=config.n_classes)
+model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
 model.load_state_dict(torch.load('Knife-Effb0-E9.pt'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 ############################# Training #################################
 print('Evaluating trained model')
-map = evaluate(test_loader,model)
-print("mAP =",map)
-    
-   
+map = evaluate(test_loader, model)
+print("mAP =", map)
