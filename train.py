@@ -118,7 +118,8 @@ val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pi
 '''-------------------Loading the model to run----------------------------'''
 model_name = 'tf_efficientnet_b0'
 model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
-model.name = model_namedevice = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model.name = model_name
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
