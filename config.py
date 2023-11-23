@@ -3,7 +3,7 @@ class DefaultConfigs(object):
     img_weight = 224  # image width
     img_height = 224  # image height
     batch_size = 16  # batch size
-    epochs = 10  # epochs
+    epochs = 20  # epochs
     learning_rate = 0.005  # learning rate
 
 
