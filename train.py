@@ -31,7 +31,7 @@ log = Logger()
 
 
 def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, start):
-    log.open(f"logs/{model}_log_train.txt")
+    log.open(f"logs/{model.name}_log_train.txt")
     log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
         datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
     log.write('                           |----- Train -----|----- Valid----|---------|\n')
@@ -120,7 +120,9 @@ val_gen = knifeDataset(val_imlist, mode="val")
 val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=8)
 
 '''-------------------Loading the model to run----------------------------'''
-model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
+model_name = 'tf_efficientnet_b0'
+model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
+model.name = model_name
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
