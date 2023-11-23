@@ -1,4 +1,4 @@
-## import libraries for training
+"""import libraries for training"""
 import sys
 import warnings
 from datetime import datetime
@@ -15,7 +15,7 @@ from utils import *
 
 warnings.filterwarnings('ignore')
 
-## Writing the loss and results
+'''Writing the loss and results'''
 if not os.path.exists("./logs/"):
     os.mkdir("./logs/")
 log = Logger()
@@ -27,7 +27,9 @@ log.write('mode     iter     epoch    |       loss      |        mAP    | time  
 log.write('-------------------------------------------------------------------------------------------\n')
 
 
-## Training the model
+'''Training the model'''
+
+
 def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, start):
     losses = AverageMeter()
     model.train()
@@ -56,7 +58,9 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
     return [losses.avg]
 
 
-# Validating the model
+'''Validating the model'''
+
+
 def evaluate(val_loader, model, criterion, epoch, train_loss, start):
     model.cuda()
     model.eval()
@@ -74,7 +78,7 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
             map.update(valid_map5, img.size(0))
             print('\r', end='', flush=True)
-            message = '%s   %5.1f %6.1f       |      %0.3f     |      %0.3f    | %s' % ( \
+            message = '%s   %5.1f %6.1f       |      %0.3f     |      %0.3f    | %s' % (
                 "val", i, epoch, train_loss[0], map.avg, time_to_str((timer() - start), 'min'))
             print(message, end='', flush=True)
         log.write("\n")
@@ -82,7 +86,9 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
     return [map.avg]
 
 
-## Computing the mean average precision, accuracy
+'''Computing the mean average precision, accuracy'''
+
+
 def map_accuracy(probs, truth, k=5):
     with torch.no_grad():
         value, top = probs.topk(k, dim=1, largest=True, sorted=True)
@@ -99,7 +105,7 @@ def map_accuracy(probs, truth, k=5):
         return map5, acc1, acc5
 
 
-######################## load file and get splits #############################
+'''------------------ load file and get splits -------------------------'''
 train_imlist = pd.read_csv("train.csv")
 train_gen = knifeDataset(train_imlist, mode="train")
 train_loader = DataLoader(train_gen, batch_size=config.batch_size, shuffle=True, pin_memory=True, num_workers=8)
@@ -107,27 +113,28 @@ val_imlist = pd.read_csv("test.csv")
 val_gen = knifeDataset(val_imlist, mode="val")
 val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=8)
 
-## Loading the model to run
+'''-------------------Loading the model to run----------------------------'''
 model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-############################# Parameters #################################
+'''----------------------Parameters--------------------------------------'''
 optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
 scheduler = lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=config.epochs * len(train_loader), eta_min=0,
                                            last_epoch=-1)
 criterion = nn.CrossEntropyLoss().cuda()
 
-############################# Training #################################
+'''------------------------Training---------------------------------------'''
 start_epoch = 0
 val_metrics = [0]
 scaler = torch.cuda.amp.GradScaler()
 start = timer()
-# train
+
+'''train'''
 for epoch in range(0, config.epochs):
     lr = get_learning_rate(optimizer)
     train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
     val_metrics = evaluate(val_loader, model, criterion, epoch, train_metrics, start)
-    ## Saving the model
+    # Saving the model
     filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
     torch.save(model.state_dict(), filename)

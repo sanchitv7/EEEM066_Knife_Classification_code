@@ -1,4 +1,4 @@
-## import libraries for training
+"""import libraries for training"""
 import warnings
 from datetime import datetime
 from timeit import default_timer as timer
@@ -14,8 +14,9 @@ from utils import *
 
 warnings.filterwarnings('ignore')
 
+'''Validating the model'''
 
-# Validating the model
+
 def evaluate(val_loader, model):
     model.cuda()
     model.eval()
@@ -35,7 +36,9 @@ def evaluate(val_loader, model):
     return map.avg
 
 
-## Computing the mean average precision, accuracy
+'''Computing the mean average precision, accuracy'''
+
+
 def map_accuracy(probs, truth, k=5):
     with torch.no_grad():
         value, top = probs.topk(k, dim=1, largest=True, sorted=True)
@@ -52,7 +55,7 @@ def map_accuracy(probs, truth, k=5):
         return map5, acc1, acc5
 
 
-######################## load file and get splits #############################
+'''------------------------------load file and get splits--------------------------------------------'''
 print('reading test file')
 test_files = pd.read_csv("test.csv")
 print('Creating test dataloader')
@@ -65,7 +68,7 @@ model.load_state_dict(torch.load('Knife-Effb0-E9.pt'))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-############################# Training #################################
+'''-----------------------------------------Training-----------------------------------------------'''
 print('Evaluating trained model')
 map = evaluate(test_loader, model)
 print("mAP =", map)
