@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 from data import knifeDataset
 import timm
 from utils import *
+from pprint import pformat
 
 warnings.filterwarnings('ignore')
 
@@ -31,12 +32,6 @@ log = Logger()
 
 
 def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, start):
-    log.open(f"logs/{model.name}_log_train.txt")
-    log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
-        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
-    log.write('                           |----- Train -----|----- Valid----|---------|\n')
-    log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
-    log.write('-------------------------------------------------------------------------------------------\n')
     losses = AverageMeter()
     model.train()
     model.training = True
@@ -139,6 +134,14 @@ scaler = torch.cuda.amp.GradScaler()
 start = timer()
 
 '''train'''
+
+log.open(f"logs/{model.name}_log_train.txt")
+log.write(pformat(config))
+log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
+    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+log.write('                           |----- Train -----|----- Valid----|---------|\n')
+log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
+log.write('-------------------------------------------------------------------------------------------\n')
 for epoch in range(0, config.epochs):
     lr = get_learning_rate(optimizer)
     train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
