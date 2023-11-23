@@ -19,18 +19,24 @@ warnings.filterwarnings('ignore')
 if not os.path.exists("./logs/"):
     os.mkdir("./logs/")
 log = Logger()
-log.open("logs/%s_log_train.txt")
-log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
-    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
-log.write('                           |----- Train -----|----- Valid----|---------|\n')
-log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
-log.write('-------------------------------------------------------------------------------------------\n')
+# log.open("logs/%s_log_train.txt")
+# log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
+#     datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+# log.write('                           |----- Train -----|----- Valid----|---------|\n')
+# log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
+# log.write('-------------------------------------------------------------------------------------------\n')
 
 
 '''Training the model'''
 
 
 def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, start):
+    log.open(f"logs/{model}_log_train.txt")
+    log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
+        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+    log.write('                           |----- Train -----|----- Valid----|---------|\n')
+    log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
+    log.write('-------------------------------------------------------------------------------------------\n')
     losses = AverageMeter()
     model.train()
     model.training = True
