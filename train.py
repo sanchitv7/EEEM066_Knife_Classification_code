@@ -35,6 +35,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
     losses = AverageMeter()
     model.train()
     model.training = True
+    
     for i, (images, target, fnames) in enumerate(train_loader):
         img = images.cuda(non_blocking=True)
         label = target.cuda(non_blocking=True)
@@ -117,8 +118,7 @@ val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pi
 '''-------------------Loading the model to run----------------------------'''
 model_name = 'tf_efficientnet_b0'
 model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
-model.name = model_name
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model.name = model_namedevice = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
