@@ -64,7 +64,7 @@ test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True
 
 print('loading trained model')
 model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
-model_weights_to_use = 'Knife-Effb0-E9.pt'
+model_weights_to_use = 'Knife-Effb0-E10.pt'
 model.load_state_dict(torch.load(model_weights_to_use))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 if torch.backends.mps.is_available():
