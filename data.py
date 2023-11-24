@@ -25,8 +25,9 @@ class knifeDataset(Dataset):
         X, fname = self.read_images(index)
         if not self.mode == "test":
             labels = self.images_df.iloc[index].Label
+            # return X, labels, fname
         else:
-            labels = pathlib.Path(self.images_df.iloc[index].Id).absolute()
+            y = pathlib.Path(self.images_df.iloc[index].Id).absolute()
         if self.mode == "train":
             X = T.Compose([T.ToPILImage(),
                            T.Resize((config.img_weight, config.img_height)),
@@ -36,7 +37,7 @@ class knifeDataset(Dataset):
                            T.RandomHorizontalFlip(p=0.5),
                            T.ToTensor(),
                            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])(X)
-        elif self.mode == "val":
+        elif self.mode == "val" or self.mode == "test":
             X = T.Compose([T.ToPILImage(),
                            T.Resize((config.img_weight, config.img_height)),
                            T.ToTensor(),
