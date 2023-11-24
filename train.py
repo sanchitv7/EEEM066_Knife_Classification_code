@@ -120,6 +120,8 @@ model_name = 'tf_efficientnet_b0'
 model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
 model.name = model_name
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
@@ -134,19 +136,20 @@ val_metrics = [0]
 scaler = torch.cuda.amp.GradScaler()
 start = timer()
 
-'''train'''
+if __name__ == '__main__':
+    '''train'''
 
-log.open(f"logs/{model.name}_log_train.txt")
-log.write(pformat(config))
-log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
-    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
-log.write('                           |----- Train -----|----- Valid----|---------|\n')
-log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
-log.write('-------------------------------------------------------------------------------------------\n')
-for epoch in range(0, config.epochs):
-    lr = get_learning_rate(optimizer)
-    train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
-    val_metrics = evaluate(val_loader, model, criterion, epoch, train_metrics, start)
-    # Saving the model
-    filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
+    log.open(f"logs/{model.name}_log_train.txt")
+    # log.write(pformat(config.__dict__))
+    log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
+        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+    log.write('                           |----- Train -----|----- Valid----|---------|\n')
+    log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
+    log.write('-------------------------------------------------------------------------------------------\n')
+    for epoch in range(0, config.epochs):
+        lr = get_learning_rate(optimizer)
+        train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
+        val_metrics = evaluate(val_loader, model, criterion, epoch, train_metrics, start)
+        # Saving the model
+        filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
     torch.save(model.state_dict(), filename)
