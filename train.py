@@ -37,8 +37,8 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
     model.training = True
     
     for i, (images, target, fnames) in enumerate(train_loader):
-        img = images.cuda(non_blocking=True)
-        label = target.cuda(non_blocking=True)
+        img = images.to(device, non_blocking=True)
+        label = target.to(device, non_blocking=True)
 
         with torch.cuda.amp.autocast():
             logits = model(img)
@@ -64,14 +64,14 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
 
 
 def evaluate(val_loader, model, criterion, epoch, train_loss, start):
-    model.cuda()
+    model.to(device)
     model.eval()
     model.training = False
     map = AverageMeter()
     with torch.no_grad():
         for i, (images, target, fnames) in enumerate(val_loader):
-            img = images.cuda(non_blocking=True)
-            label = target.cuda(non_blocking=True)
+            img = images.to(device, non_blocking=True)
+            label = target.to(device, non_blocking=True)
 
             with torch.cuda.amp.autocast():
                 logits = model(img)
@@ -111,7 +111,7 @@ def map_accuracy(probs, truth, k=5):
 train_imlist = pd.read_csv("train.csv")
 train_gen = knifeDataset(train_imlist, mode="train")
 train_loader = DataLoader(train_gen, batch_size=config.batch_size, shuffle=True, pin_memory=True, num_workers=8)
-val_imlist = pd.read_csv("test.csv")
+val_imlist = pd.read_csv("val.csv")
 val_gen = knifeDataset(val_imlist, mode="val")
 val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=8)
 
@@ -123,12 +123,13 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 model.to(device)
+print(f'Using backend: {device}')
 
 '''----------------------Parameters--------------------------------------'''
 optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
 scheduler = lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=config.epochs * len(train_loader), eta_min=0,
                                            last_epoch=-1)
-criterion = nn.CrossEntropyLoss().cuda()
+criterion = nn.CrossEntropyLoss().to(device)
 
 '''------------------------Training---------------------------------------'''
 start_epoch = 0
@@ -151,5 +152,6 @@ if __name__ == '__main__':
         train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
         val_metrics = evaluate(val_loader, model, criterion, epoch, train_metrics, start)
         # Saving the model
-        filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
-    torch.save(model.state_dict(), filename)
+        if (epoch + 1) % 5 == 0:
+            filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
+            torch.save(model.state_dict(), filename)
