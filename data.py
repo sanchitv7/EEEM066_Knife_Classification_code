@@ -26,7 +26,7 @@ class knifeDataset(Dataset):
         if not self.mode == "test":
             labels = self.images_df.iloc[index].Label
         else:
-            y = str(self.images_df.iloc[index].Id.absolute())
+            labels = str(self.images_df.iloc[index].Id.absolute())
         if self.mode == "train":
             X = T.Compose([T.ToPILImage(),
                            T.Resize((config.img_weight, config.img_height)),

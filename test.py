@@ -18,14 +18,14 @@ warnings.filterwarnings('ignore')
 
 
 def evaluate(val_loader, model):
-    model.cuda()
+    model.to(device)
     model.eval()
     model.training = False
     map = AverageMeter()
     with torch.no_grad():
         for i, (images, target, fnames) in enumerate(val_loader):
-            img = images.cuda(non_blocking=True)
-            label = target.cuda(non_blocking=True)
+            img = images.to(device, non_blocking=True)
+            label = target.to(device, non_blocking=True)
 
             with torch.cuda.amp.autocast():
                 logits = model(img)
@@ -64,8 +64,11 @@ test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True
 
 print('loading trained model')
 model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
-model.load_state_dict(torch.load('Knife-Effb0-E9.pt'))
+model_weights_to_use = 'Knife-Effb0-E9.pt'
+model.load_state_dict(torch.load(model_weights_to_use))
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
 model.to(device)
 
 '''-----------------------------------------Training-----------------------------------------------'''
