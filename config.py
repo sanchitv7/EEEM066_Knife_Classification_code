@@ -1,10 +1,16 @@
 class DefaultConfigs(object):
-    n_classes = 192  # number of classes
-    img_weight = 224  # image width
-    img_height = 224  # image height
-    batch_size = 16  # batch size
-    epochs = 1  # epochs
-    learning_rate = 0.005  # learning rate
+    def __init__(self, n_classes, img_weight, img_height, batch_size, epochs, learning_rate):
+        self.n_classes = n_classes  # number of classes
+        self.img_weight = img_weight  # image width
+        self.img_height = img_height  # image height
+        self.batch_size = batch_size  # batch size
+        self.epochs = epochs  # epochs
+        self.learning_rate = learning_rate  # learning rate
 
 
-config = DefaultConfigs()
+config = DefaultConfigs(n_classes=192,
+                        img_weight=224,
+                        img_height=224,
+                        batch_size=32,
+                        epochs=2,
+                        learning_rate=0.005)

@@ -1,25 +1,26 @@
 """import libraries for training"""
-import sys
+import torch.optim
+from torch import optim
+from torch.optim import lr_scheduler
+from torch.utils.data import DataLoader
+import timm
+# import sys
 import warnings
 from datetime import datetime
 from timeit import default_timer as timer
 import pandas as pd
-import torch.optim
-from sklearn.model_selection import train_test_split
-from torch import optim
-from torch.optim import lr_scheduler
-from torch.utils.data import DataLoader
+# from sklearn.model_selection import train_test_split
 from data import knifeDataset
-import timm
 from utils import *
-from pprint import pformat
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=Warning)
 
 '''Writing the loss and results'''
 if not os.path.exists("./logs/"):
     os.mkdir("./logs/")
 log = Logger()
+
 # log.open("logs/%s_log_train.txt")
 # log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
 #     datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
@@ -35,7 +36,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
     losses = AverageMeter()
     model.train()
     model.training = True
-    
+
     for i, (images, target, fnames) in enumerate(train_loader):
         img = images.to(device, non_blocking=True)
         label = target.to(device, non_blocking=True)
@@ -51,7 +52,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
         scheduler.step()
 
         print('\r', end='', flush=True)
-        message = '%s %5.1f %6.1f        |      %0.3f     |      %0.3f     | %s' % ( \
+        message = '%s %5.1f %6.1f        |      %0.3f     |      %0.3f     | %s' % (
             "train", i, epoch, losses.avg, valid_accuracy[0], time_to_str((timer() - start), 'min'))
         print(message, end='', flush=True)
     log.write("\n")
@@ -123,7 +124,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 model.to(device)
-print(f'Using backend: {device}')
 
 '''----------------------Parameters--------------------------------------'''
 optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
@@ -137,16 +137,17 @@ val_metrics = [0]
 scaler = torch.cuda.amp.GradScaler()
 start = timer()
 
+log.open(f"logs/{model.name}_log_train.txt")
+for k, v in config.__dict__.items():
+    log.write(f'{k}: {v}\n')
+log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
+    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+log.write('                           |----- Train -----|----- Valid----|---------|\n')
+log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
+log.write('-------------------------------------------------------------------------------------------\n')
+
 if __name__ == '__main__':
     '''train'''
-
-    log.open(f"logs/{model.name}_log_train.txt")
-    # log.write(pformat(config.__dict__))
-    log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
-        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
-    log.write('                           |----- Train -----|----- Valid----|---------|\n')
-    log.write('mode     iter     epoch    |       loss      |        mAP    | time    |\n')
-    log.write('-------------------------------------------------------------------------------------------\n')
     for epoch in range(0, config.epochs):
         lr = get_learning_rate(optimizer)
         train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)

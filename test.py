@@ -1,18 +1,18 @@
 """import libraries for training"""
 import warnings
-from datetime import datetime
-from timeit import default_timer as timer
+# from datetime import datetime
+# from timeit import default_timer as timer
 import pandas as pd
 import torch.optim
-from sklearn.model_selection import train_test_split
-from torch import optim
-from torch.optim import lr_scheduler
+# from sklearn.model_selection import train_test_split
+# from torch import optim
+# from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from data import knifeDataset
 import timm
 from utils import *
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore', category=Warning)
 
 '''Validating the model'''
 
@@ -59,7 +59,7 @@ def map_accuracy(probs, truth, k=5):
 print('reading test file')
 test_files = pd.read_csv("test.csv")
 print('Creating test dataloader')
-test_gen = knifeDataset(test_files, mode="val")
+test_gen = knifeDataset(test_files, mode="test")
 test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True, num_workers=8)
 
 print('loading trained model')
@@ -71,7 +71,8 @@ if torch.backends.mps.is_available():
     device = torch.device("mps")
 model.to(device)
 
-'''-----------------------------------------Training-----------------------------------------------'''
-print('Evaluating trained model')
-map = evaluate(test_loader, model)
-print("mAP =", map)
+'''-----------------------------------------Testing-----------------------------------------------'''
+if __name__ == '__main__':
+    print('Evaluating trained model')
+    map = evaluate(test_loader, model)
+    print("mAP =", map)
