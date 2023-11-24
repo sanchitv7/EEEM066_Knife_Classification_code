@@ -150,3 +150,12 @@ class ArcFaceLoss(nn.modules.Module):
         gamma = 1
         loss = (loss1 + gamma * loss2) / (1 + gamma)
         return loss
+
+
+def get_num_workers():
+    if torch.cuda.is_available():
+        return 16
+    elif torch.backends.mps.is_available():
+        return 0
+    else:
+        return 8

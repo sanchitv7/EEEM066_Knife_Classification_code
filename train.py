@@ -21,6 +21,8 @@ if not os.path.exists("./logs/"):
     os.mkdir("./logs/")
 log = Logger()
 
+set_num_workers = get_num_workers()
+
 # log.open("logs/%s_log_train.txt")
 # log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
 #     datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
@@ -111,10 +113,10 @@ def map_accuracy(probs, truth, k=5):
 '''------------------ load file and get splits -------------------------'''
 train_imlist = pd.read_csv("train.csv")
 train_gen = knifeDataset(train_imlist, mode="train")
-train_loader = DataLoader(train_gen, batch_size=config.batch_size, shuffle=True, pin_memory=True, num_workers=8)
+train_loader = DataLoader(train_gen, batch_size=config.batch_size, shuffle=True, pin_memory=True, num_workers=set_num_workers)
 val_imlist = pd.read_csv("val.csv")
 val_gen = knifeDataset(val_imlist, mode="val")
-val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=8)
+val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=set_num_workers)
 
 '''-------------------Loading the model to run----------------------------'''
 model_name = 'tf_efficientnet_b0'

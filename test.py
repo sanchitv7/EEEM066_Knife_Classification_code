@@ -56,23 +56,31 @@ def map_accuracy(probs, truth, k=5):
 
 
 '''------------------------------load file and get splits--------------------------------------------'''
+model_weights_to_use = 'Knife-Effb0-E10.pt'
+
+
+'''Set device to use'''
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+
+set_num_workers = get_num_workers()
+print(f'Using {set_num_workers} workers | Device: {device}\n')
+
 print('reading test file')
 test_files = pd.read_csv("test.csv")
 print('Creating test dataloader')
 test_gen = knifeDataset(test_files, mode="test")
-test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True, num_workers=8)
+test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True, num_workers=set_num_workers)
 
 print('loading trained model')
 model = timm.create_model('tf_efficientnet_b0', pretrained=True, num_classes=config.n_classes)
-model_weights_to_use = 'Knife-Effb0-E10.pt'
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-if torch.backends.mps.is_available():
-    device = torch.device("mps")
 model.load_state_dict(torch.load(model_weights_to_use, map_location=torch.device(device)))
 model.to(device)
+
 
 '''-----------------------------------------Testing-----------------------------------------------'''
 if __name__ == '__main__':
     print('Evaluating trained model')
     map = evaluate(test_loader, model)
-    print("mAP =", map)
+    print(f"mAP ={map.item():.3f}")
