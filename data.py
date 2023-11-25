@@ -15,7 +15,7 @@ import cv2
 class knifeDataset(Dataset):
     def __init__(self, images_df, mode="train"):
         self.images_df = images_df.copy()
-        self.images_df.Id = self.images_df.Id
+        self.images_df.Id = images_df.Id
         self.mode = mode
 
     def __len__(self):
