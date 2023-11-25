@@ -54,7 +54,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
         scheduler.step()
 
         print('\r', end='', flush=True)
-        message = '%s         %d        %d         |       %0.3f     |      %0.3f     |  %s' % (
+        message = '%s         %d           %d     |       %0.3f     |      %0.3f      |  %s' % (
             "train", i, epoch, losses.avg, valid_accuracy[0], time_to_str((timer() - start), 'min'))
         print(message, end='', flush=True)
     log.write("\n")
@@ -83,7 +83,7 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
             map.update(valid_map5, img.size(0))
             print('\r', end='', flush=True)
-            message = '%s      %d        %d         |       %0.3f     |      %0.3f     |  %s' % (
+            message = '%s      %d           %d     |       %0.3f     |      %0.3f      |  %s' % (
                 "val", i, epoch, train_loss[0], map.avg, time_to_str((timer() - start), 'min'))
             print(message, end='', flush=True)
         log.write("\n")
