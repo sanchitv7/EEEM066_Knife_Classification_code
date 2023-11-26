@@ -186,8 +186,8 @@ if __name__ == '__main__':
         save_val_losses.append(val_metrics[1])
         save_val_map.append(val_metrics[0])
         # Saving the model
-        if (epoch + 1) % 5 == 0:
-            filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
+        if (epoch + 1) % 10 == 0:
+            filename = "Conf_5_Knife-Effb0-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
 
     log.write(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     plt.title('Training/Validation Loss vs Epochs')
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 1/train_val_loss_vs_epochs_config_1.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 5/train_val_loss_vs_epochs_config_5.png')
     plt.show()
 
     # Plotting validation mAP vs epochs
@@ -217,5 +217,5 @@ if __name__ == '__main__':
     plt.title('Validation mAP vs Epochs')
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 1/val_map_vs_epochs_config_1.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 5/val_map_vs_epochs_config_5.png')
     plt.show()
