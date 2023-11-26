@@ -48,7 +48,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-# print logger
+# print log
 class Logger(object):
     def __init__(self):
         self.terminal = sys.stdout  # stdout
@@ -59,7 +59,8 @@ class Logger(object):
         self.file = open(file, mode)
 
     def write(self, message, is_terminal=1, is_file=1):
-        if '\r' in message: is_file = 0
+        if '\r' in message:
+            is_file = 0
 
         if is_terminal == 1:
             self.terminal.write(message)

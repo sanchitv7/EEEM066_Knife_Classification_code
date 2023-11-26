@@ -168,7 +168,7 @@ start_epoch = 0
 val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
 
-log.open(f"logs/{model.name}_log_train.txt")
+log.open(f"logs/{model.name}_log_train_{config_name}.txt")
 log.write(f'Config: {config_name}')
 
 for k, v in config.__dict__.items():
@@ -209,6 +209,11 @@ if __name__ == '__main__':
 
     epochs = range(1, config.epochs + 1)
     epochs_list = list(epochs)  # Convert range object to a list for plt.xticks
+
+    '''Plot and save results'''
+
+    if not os.path.exists(f"./result_plots/{config_name}"):
+        os.mkdir(f"./result_plots/{config_name}")
 
     # Plotting training/validation losses vs epochs
     plt.figure(figsize=(10, 6))

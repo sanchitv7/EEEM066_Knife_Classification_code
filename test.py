@@ -17,11 +17,14 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-mn", "--model-name", required=True)
 parser.add_argument('-mw', '--model-weights', required=True)
+parser.add_argument("-cn", "--config-name", required=True)
 
 
 args = parser.parse_args()
 model_weights_to_use = args.model_weights
 model_name_to_use = args.model_name
+config_name = args.config_name
+
 
 warnings.filterwarnings('ignore', category=Warning)
 
@@ -74,21 +77,27 @@ def map_accuracy(probs, truth, k=5):
 # model_weights_to_use = 'Conf_6_Knife-Effb0-E10.pt'
 
 
+# Create an instance of Logger
+log = Logger()
+
+# Open the log file in append mode
+log.open(f'logs/{model_name_to_use}_log_train_{config_name}.txt', mode='a')
 # Set device to use
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 
 set_num_workers = get_num_workers()
-print(f'Using {set_num_workers} workers | Device: {device}\n')
+log.write(f'\n------------Test Results---------------\n')
+log.write(f'\nUsing {set_num_workers} workers | Device: {device}\n')
 
-print('reading test file')
+log.write('\nreading test file')
 test_files = pd.read_csv("test.csv")
-print('Creating test dataloader')
+log.write('\nCreating test dataloader')
 test_gen = knifeDataset(test_files, mode="test")
 test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True, num_workers=set_num_workers)
 
-print('loading trained model')
+log.write('\nloading trained model')
 model = timm.create_model(model_name_to_use, pretrained=True, num_classes=config.n_classes)
 model.name = model_name_to_use
 model.load_state_dict(torch.load(model_weights_to_use, map_location=torch.device(device)))
@@ -97,9 +106,9 @@ model.to(device)
 
 '''-----------------------------------------Testing-----------------------------------------------'''
 if __name__ == '__main__':
-    print('Evaluating trained model')
+    log.write('\nEvaluating trained model')
     map = evaluate(test_loader, model)
     # log.open(f"logs/{model.name}_log_train.txt")
 
-    print(f"Testing results for: {model_weights_to_use}")
-    print(f"\nmAP = {map.item():.3f}")
+    log.write(f"Testing results for: {model_weights_to_use}")
+    log.write(f"\nmAP = {map.item():.3f}")
