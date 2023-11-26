@@ -158,7 +158,6 @@ criterion = nn.CrossEntropyLoss().to(device)
 start_epoch = 0
 val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
-start = timer()
 
 log.open(f"logs/{model.name}_log_train.txt")
 for k, v in config.__dict__.items():
@@ -177,6 +176,7 @@ if __name__ == '__main__':
     training_start = timer()
     for epoch in range(0, config.epochs):
         lr = get_learning_rate(optimizer)
+        start = timer()
         train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
 
         start = timer()
