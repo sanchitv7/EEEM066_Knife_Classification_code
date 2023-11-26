@@ -58,7 +58,7 @@ def map_accuracy(probs, truth, k=5):
 '''------------------------------load file and get splits--------------------------------------------'''
 # Choose model
 model_name_to_use = 'tf_efficientnet_b0'
-model_weights_to_use = 'Knife-Effb0-E10_Config1.pt'
+model_weights_to_use = 'Knife-Effb0-E15.pt'
 
 
 # Set device to use
