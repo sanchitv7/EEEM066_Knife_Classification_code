@@ -160,6 +160,6 @@ def get_num_workers():
     if torch.cuda.is_available():
         return 16
     elif torch.backends.mps.is_available():
-        return 1
+        return 0
     else:
         return 8

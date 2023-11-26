@@ -187,7 +187,8 @@ if __name__ == '__main__':
         if (epoch + 1) % 5 == 0:
             filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
-    print(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
+
+    log.write(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
 
     training_losses_tensor = torch.tensor(save_training_losses)
     val_losses_tensor = torch.tensor(save_val_losses)
@@ -204,7 +205,7 @@ if __name__ == '__main__':
     plt.legend()
     plt.grid(True)
     plt.show()
-    plt.savefig('train_val_loss_vs_epochs.png')
+    # plt.savefig('train_val_loss_vs_epochs.png')
 
     # Plotting validation mAP vs epochs
     plt.figure(figsize=(10, 6))
@@ -215,4 +216,4 @@ if __name__ == '__main__':
     plt.legend()
     plt.grid(True)
     plt.show()
-    plt.savefig('val_map_vs_epochs.png')
+    # plt.savefig('val_map_vs_epochs.png')
