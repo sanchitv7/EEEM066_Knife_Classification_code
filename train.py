@@ -212,8 +212,8 @@ if __name__ == '__main__':
 
     '''Plot and save results'''
 
-    if not os.path.exists(f"./result_plots/{config_name}"):
-        os.mkdir(f"./result_plots/{config_name}")
+    if not os.path.exists(f"./result_plots/{model_name}/{config_name}"):
+        os.mkdir(f"./result_plots/{model_name}/{config_name}")
 
     # Plotting training/validation losses vs epochs
     plt.figure(figsize=(10, 6))
