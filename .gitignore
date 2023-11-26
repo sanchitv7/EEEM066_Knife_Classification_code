@@ -6,8 +6,6 @@ __pycache__/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
 *$py.class
 **/__pycache__
 
