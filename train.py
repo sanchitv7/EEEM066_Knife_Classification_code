@@ -84,6 +84,7 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
                 logits = model(img)
                 preds = logits.softmax(1)
             loss = criterion(logits, label)
+
             losses.update(loss.item(), images.size(0))
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
             map.update(valid_map5, img.size(0))
