@@ -29,6 +29,10 @@ class AverageMeter(object):
     """Computes and stores the average and current value"""
 
     def __init__(self):
+        self.count = None
+        self.sum = None
+        self.avg = None
+        self.val = None
         self.reset()
 
     def reset(self):
@@ -156,6 +160,6 @@ def get_num_workers():
     if torch.cuda.is_available():
         return 16
     elif torch.backends.mps.is_available():
-        return 0
+        return 1
     else:
         return 8

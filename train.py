@@ -12,7 +12,9 @@ import pandas as pd
 # from sklearn.model_selection import train_test_split
 from data import knifeDataset
 from utils import *
+import matplotlib.pyplot as plt
 
+torch.backends.cudnn.benchmark = True
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=Warning)
 
@@ -55,7 +57,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
 
         print('\r', end='', flush=True)
         message = '%s         %d          %d     |       %0.3f     |      %0.3f      |  %s' % (
-            "train", i, epoch, losses.avg, valid_accuracy[0], time_to_str((timer() - start), 'min'))
+            "train", i, epoch + 1, losses.avg, valid_accuracy[0], time_to_str((timer() - start), 'sec'))
         print(message, end='', flush=True)
     log.write("\n")
     log.write(message)
@@ -67,6 +69,7 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
 
 
 def evaluate(val_loader, model, criterion, epoch, train_loss, start):
+    losses = AverageMeter()
     model.to(device)
     model.eval()
     model.training = False
@@ -79,16 +82,17 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
             with torch.cuda.amp.autocast():
                 logits = model(img)
                 preds = logits.softmax(1)
-
+            loss = criterion(logits, label)
+            losses.update(loss.item(), images.size(0))
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
             map.update(valid_map5, img.size(0))
             print('\r', end='', flush=True)
-            message = '%s      %d          %d     |       %0.3f     |      %0.3f      |  %s' % (
-                "val", i, epoch, train_loss[0], map.avg, time_to_str((timer() - start), 'min'))
+            message = '%s            %d          %d     |       %0.3f     |      %0.3f      |  %s' % (
+                "val", i, epoch + 1, train_loss[0], map.avg, time_to_str((timer() - start), 'sec'))
             print(message, end='', flush=True)
         log.write("\n")
         log.write(message)
-    return [map.avg]
+    return [map.avg, losses.avg]
 
 
 '''Computing the mean average precision, accuracy'''
@@ -113,14 +117,25 @@ def map_accuracy(probs, truth, k=5):
 '''------------------ load file and get splits -------------------------'''
 train_imlist = pd.read_csv("train.csv")
 train_gen = knifeDataset(train_imlist, mode="train")
-train_loader = DataLoader(train_gen, batch_size=config.batch_size, shuffle=True, pin_memory=True, num_workers=set_num_workers)
+train_loader = DataLoader(train_gen,
+                          batch_size=config.batch_size,
+                          shuffle=True,
+                          pin_memory=True,
+                          num_workers=set_num_workers)
+
 val_imlist = pd.read_csv("val.csv")
 val_gen = knifeDataset(val_imlist, mode="val")
-val_loader = DataLoader(val_gen, batch_size=config.batch_size, shuffle=False, pin_memory=True, num_workers=set_num_workers)
+val_loader = DataLoader(val_gen,
+                        batch_size=config.batch_size,
+                        shuffle=False,
+                        pin_memory=True,
+                        num_workers=set_num_workers)
 
 '''-------------------Loading the model to run----------------------------'''
 # Set model
 model_name = 'tf_efficientnet_b0'
+model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
+model.name = model_name
 
 # Set device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -129,8 +144,6 @@ if torch.backends.mps.is_available():
 
 print(f'Using {set_num_workers} workers | Device: {device}\n')
 
-model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
-model.name = model_name
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
@@ -148,19 +161,58 @@ start = timer()
 log.open(f"logs/{model.name}_log_train.txt")
 for k, v in config.__dict__.items():
     log.write(f'{k}: {v}\n')
-log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
-    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
+log.write("\n------------------------------------- [START %s] %s\n\n" % (
+    datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 41))
 log.write('                                 |----- Train -----|----- Valid -----|------------|\n')
 log.write('mode         iter        epoch   |       loss      |        mAP      |    time    |\n')
 log.write('-------------------------------------------------------------------------------------------\n')
 
 if __name__ == '__main__':
     '''train'''
+    save_training_losses = []
+    save_val_losses = []
+    save_val_map = []
+    training_start = timer()
     for epoch in range(0, config.epochs):
         lr = get_learning_rate(optimizer)
         train_metrics = train(train_loader, model, criterion, optimizer, epoch, val_metrics, start)
+
+        start = timer()
         val_metrics = evaluate(val_loader, model, criterion, epoch, train_metrics, start)
+
+        save_training_losses.append(train_metrics[0])
+        save_val_losses.append(val_metrics[1])
+        save_val_map.append(val_metrics[0])
         # Saving the model
         if (epoch + 1) % 5 == 0:
             filename = "Knife-Effb0-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
+    print(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
+
+    training_losses_tensor = torch.tensor(save_training_losses)
+    val_losses_tensor = torch.tensor(save_val_losses)
+    val_map_tensor = torch.tensor(save_val_map)
+
+    epochs = range(1, config.epochs + 1)
+    # Plotting training losses vs epochs
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, training_losses_tensor.cpu().numpy(), label='Training Loss', marker='o', color='blue')
+    plt.plot(epochs, val_losses_tensor.cpu().numpy(), label='Training Loss', marker='o', color='yellow')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training/Validation Loss vs Epochs')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    plt.savefig('train_val_loss_vs_epochs.png')
+
+    # Plotting validation mAP vs epochs
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, val_map_tensor.cpu().numpy(), label='Validation mAP', marker='o', color='red')
+    plt.xlabel('Epoch')
+    plt.ylabel('Validation mAP')
+    plt.title('Validation mAP vs Epochs')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    plt.savefig('val_map_vs_epochs.png')
