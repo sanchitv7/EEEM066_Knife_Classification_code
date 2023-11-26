@@ -186,8 +186,8 @@ if __name__ == '__main__':
         save_val_losses.append(val_metrics[1])
         save_val_map.append(val_metrics[0])
         # Saving the model
-        if (epoch + 1) % 10 == 0:
-            filename = "Conf_5_Knife-Effb0-E" + str(epoch + 1) + ".pt"
+        if (epoch + 1) % 5 == 0:
+            filename = "Conf_6_Knife-Effb0-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
 
     log.write(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
@@ -197,6 +197,8 @@ if __name__ == '__main__':
     val_map_tensor = torch.tensor(save_val_map)
 
     epochs = range(1, config.epochs + 1)
+    epochs_list = list(epochs)  # Convert range object to a list for plt.xticks
+
     # Plotting training/validation losses vs epochs
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, training_losses_tensor.cpu().numpy(), label='Training Loss', marker='o', color='blue')
@@ -204,9 +206,10 @@ if __name__ == '__main__':
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training/Validation Loss vs Epochs')
+    plt.xticks(epochs_list)  
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 5/train_val_loss_vs_epochs_config_5.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 6/train_val_loss_vs_epochs_config_6.png')
     plt.show()
 
     # Plotting validation mAP vs epochs
@@ -215,7 +218,8 @@ if __name__ == '__main__':
     plt.xlabel('Epoch')
     plt.ylabel('Validation mAP')
     plt.title('Validation mAP vs Epochs')
+    plt.xticks(epochs_list)  
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 5/val_map_vs_epochs_config_5.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 6/val_map_vs_epochs_config_6.png')
     plt.show()

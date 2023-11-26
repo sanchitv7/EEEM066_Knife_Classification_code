@@ -14,7 +14,7 @@ from utils import *
 
 warnings.filterwarnings('ignore', category=Warning)
 
-log = Logger()
+# log = Logger()
 
 '''Validating the model'''
 
@@ -60,7 +60,7 @@ def map_accuracy(probs, truth, k=5):
 '''------------------------------load file and get splits--------------------------------------------'''
 # Choose model
 model_name_to_use = 'tf_efficientnet_b0'
-model_weights_to_use = 'Conf_5_Knife-Effb0-E20.pt'
+model_weights_to_use = 'Conf_6_Knife-Effb0-E10.pt'
 
 
 # Set device to use
@@ -88,7 +88,7 @@ model.to(device)
 if __name__ == '__main__':
     print('Evaluating trained model')
     map = evaluate(test_loader, model)
-    log.open(f"logs/{model.name}_log_train.txt")
+    # log.open(f"logs/{model.name}_log_train.txt")
 
-    log.write(f"Testing results for: {model_weights_to_use}")
-    log.write(f"\nmAP = {map.item():.3f}")
+    print(f"Testing results for: {model_weights_to_use}")
+    print(f"\nmAP = {map.item():.3f}")

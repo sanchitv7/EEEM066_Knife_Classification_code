@@ -11,6 +11,6 @@ class DefaultConfigs(object):
 config = DefaultConfigs(n_classes=192,
                         img_weight=224,
                         img_height=224,
-                        batch_size=64,
-                        epochs=20,
-                        learning_rate=0.0001)
+                        batch_size=128,
+                        epochs=10,
+                        learning_rate=0.05)
