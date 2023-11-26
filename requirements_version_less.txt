@@ -1,0 +1,8 @@
+numpy
+opencv_python_headless
+pandas
+Pillow
+scikit_learn
+timm
+torch
+torchvision
