@@ -156,7 +156,7 @@ criterion = nn.CrossEntropyLoss().to(device)
 
 '''------------------------Training---------------------------------------'''
 start_epoch = 0
-val_metrics = [0]
+val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
 start = timer()
 
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     plt.title('Training/Validation Loss vs Epochs')
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/train_val_loss_vs_epochs_config_2.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 1/train_val_loss_vs_epochs_config_1.png')
     plt.show()
 
     # Plotting validation mAP vs epochs
@@ -217,5 +217,5 @@ if __name__ == '__main__':
     plt.title('Validation mAP vs Epochs')
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/val_map_vs_epochs_config_2.png')
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 1/val_map_vs_epochs_config_1.png')
     plt.show()
