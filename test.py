@@ -60,7 +60,7 @@ def map_accuracy(probs, truth, k=5):
 '''------------------------------load file and get splits--------------------------------------------'''
 # Choose model
 model_name_to_use = 'tf_efficientnet_b0'
-model_weights_to_use = 'Conf_5_Knife-Effb0-E40.pt'
+model_weights_to_use = 'Conf_5_Knife-Effb0-E20.pt'
 
 
 # Set device to use
