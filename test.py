@@ -11,6 +11,17 @@ from torch.utils.data import DataLoader
 from data import knifeDataset
 import timm
 from utils import *
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-mn", "--model-name", required=True)
+parser.add_argument('-mw', '--model-weights', required=True)
+
+
+args = parser.parse_args()
+model_weights_to_use = args.model_weights
+model_name_to_use = args.model_name
 
 warnings.filterwarnings('ignore', category=Warning)
 
@@ -59,8 +70,8 @@ def map_accuracy(probs, truth, k=5):
 
 '''------------------------------load file and get splits--------------------------------------------'''
 # Choose model
-model_name_to_use = 'tf_efficientnet_b0'
-model_weights_to_use = 'Conf_6_Knife-Effb0-E10.pt'
+# model_name_to_use = 'tf_efficientnet_b0'
+# model_weights_to_use = 'Conf_6_Knife-Effb0-E10.pt'
 
 
 # Set device to use

@@ -1,4 +1,6 @@
 """import libraries for training"""
+import sys
+
 import torch.optim
 from torch import optim
 from torch.optim import lr_scheduler
@@ -13,6 +15,7 @@ import pandas as pd
 from data import knifeDataset
 from utils import *
 import matplotlib.pyplot as plt
+import argparse
 
 torch.backends.cudnn.benchmark = True
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -24,7 +27,13 @@ if not os.path.exists("./logs/"):
 log = Logger()
 
 set_num_workers = get_num_workers()
+parser = argparse.ArgumentParser()
+parser.add_argument("-mn", "--model-name", required=True)
+parser.add_argument("-cn", "--config-name", required=True)
 
+args = parser.parse_args()
+model_name = args.model_name
+config_name = args.config_name
 # log.open("logs/%s_log_train.txt")
 # log.write("\n----------------------------------------------- [START %s] %s\n\n" % (
 #     datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 51))
@@ -135,7 +144,7 @@ val_loader = DataLoader(val_gen,
 
 '''-------------------Loading the model to run----------------------------'''
 # Set model
-model_name = 'tf_efficientnet_b0'
+# model_name = 'tf_efficientnet_b0'
 model = timm.create_model(model_name, pretrained=True, num_classes=config.n_classes)
 model.name = model_name
 
@@ -160,6 +169,8 @@ val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
 
 log.open(f"logs/{model.name}_log_train.txt")
+log.write(f'Config: {config_name}')
+
 for k, v in config.__dict__.items():
     log.write(f'{k}: {v}\n')
 log.write("\n------------------------------------- [START %s] %s\n\n" % (
@@ -187,7 +198,7 @@ if __name__ == '__main__':
         save_val_map.append(val_metrics[0])
         # Saving the model
         if (epoch + 1) % 5 == 0:
-            filename = "Conf_6_Knife-Effb0-E" + str(epoch + 1) + ".pt"
+            filename = f"{config_name}_Knife-Effb0-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
 
     log.write(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
@@ -206,10 +217,11 @@ if __name__ == '__main__':
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training/Validation Loss vs Epochs')
-    plt.xticks(epochs_list)  
+    plt.xticks(epochs_list)
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 6/train_val_loss_vs_epochs_config_6.png')
+    plt.savefig(f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/'
+                f'{config_name}/train_val_loss_vs_epochs_{config_name}.png')
     plt.show()
 
     # Plotting validation mAP vs epochs
@@ -218,8 +230,10 @@ if __name__ == '__main__':
     plt.xlabel('Epoch')
     plt.ylabel('Validation mAP')
     plt.title('Validation mAP vs Epochs')
-    plt.xticks(epochs_list)  
+    plt.xticks(epochs_list)
     plt.legend()
     plt.grid(True)
-    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/Config 6/val_map_vs_epochs_config_6.png')
+    plt.savefig(
+        f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/'
+        f'{config_name}/val_map_vs_epochs_{config_name}.png')
     plt.show()
