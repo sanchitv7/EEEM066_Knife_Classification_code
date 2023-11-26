@@ -56,8 +56,9 @@ def train(train_loader, model, criterion, optimizer, epoch, valid_accuracy, star
         scheduler.step()
 
         print('\r', end='', flush=True)
-        message = '%s         %d          %d     |       %0.3f     |      %0.3f      |  %s' % (
-            "train", i, epoch + 1, losses.avg, valid_accuracy[0], time_to_str((timer() - start), 'sec'))
+        message = '%s         %d          %d     |       %0.3f     |       %0.3f     |      %0.3f      |  %s' % (
+            "train", i, epoch + 1, losses.avg, valid_accuracy[1], valid_accuracy[0],
+            time_to_str((timer() - start), 'sec'))
         print(message, end='', flush=True)
     log.write("\n")
     log.write(message)
@@ -87,8 +88,8 @@ def evaluate(val_loader, model, criterion, epoch, train_loss, start):
             valid_map5, valid_acc1, valid_acc5 = map_accuracy(preds, label)
             map.update(valid_map5, img.size(0))
             print('\r', end='', flush=True)
-            message = '%s            %d          %d     |       %0.3f     |      %0.3f      |  %s' % (
-                "val", i, epoch + 1, train_loss[0], map.avg, time_to_str((timer() - start), 'sec'))
+            message = '%s            %d          %d     |       %0.3f     |       %0.3f     |      %0.3f      |  %s' % (
+                "val", i, epoch + 1, train_loss[0], losses.avg, map.avg, time_to_str((timer() - start), 'sec'))
             print(message, end='', flush=True)
         log.write("\n")
         log.write(message)
@@ -163,8 +164,8 @@ for k, v in config.__dict__.items():
     log.write(f'{k}: {v}\n')
 log.write("\n------------------------------------- [START %s] %s\n\n" % (
     datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '-' * 41))
-log.write('                                 |----- Train -----|----- Valid -----|------------|\n')
-log.write('mode         iter        epoch   |       loss      |        mAP      |    time    |\n')
+log.write('                                 |----- Train -----|----- Valid -----|----- Valid -----|------------|\n')
+log.write('mode         iter        epoch   |       loss      |       loss      |        mAP      |    time    |\n')
 log.write('-------------------------------------------------------------------------------------------\n')
 
 if __name__ == '__main__':
@@ -195,17 +196,17 @@ if __name__ == '__main__':
     val_map_tensor = torch.tensor(save_val_map)
 
     epochs = range(1, config.epochs + 1)
-    # Plotting training losses vs epochs
+    # Plotting training/validation losses vs epochs
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, training_losses_tensor.cpu().numpy(), label='Training Loss', marker='o', color='blue')
-    plt.plot(epochs, val_losses_tensor.cpu().numpy(), label='Training Loss', marker='o', color='yellow')
+    plt.plot(epochs, val_losses_tensor.cpu().numpy(), label='Validation Loss', marker='o', color='green')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training/Validation Loss vs Epochs')
     plt.legend()
     plt.grid(True)
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/train_val_loss_vs_epochs_config_2.png')
     plt.show()
-    # plt.savefig('train_val_loss_vs_epochs.png')
 
     # Plotting validation mAP vs epochs
     plt.figure(figsize=(10, 6))
@@ -215,5 +216,5 @@ if __name__ == '__main__':
     plt.title('Validation mAP vs Epochs')
     plt.legend()
     plt.grid(True)
+    plt.savefig('/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/val_map_vs_epochs_config_2.png')
     plt.show()
-    # plt.savefig('val_map_vs_epochs.png')
