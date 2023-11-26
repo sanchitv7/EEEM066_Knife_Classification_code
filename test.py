@@ -14,6 +14,8 @@ from utils import *
 
 warnings.filterwarnings('ignore', category=Warning)
 
+log = Logger()
+
 '''Validating the model'''
 
 
@@ -77,6 +79,7 @@ test_loader = DataLoader(test_gen, batch_size=64, shuffle=False, pin_memory=True
 
 print('loading trained model')
 model = timm.create_model(model_name_to_use, pretrained=True, num_classes=config.n_classes)
+model.name = model_name_to_use
 model.load_state_dict(torch.load(model_weights_to_use, map_location=torch.device(device)))
 model.to(device)
 
@@ -85,4 +88,7 @@ model.to(device)
 if __name__ == '__main__':
     print('Evaluating trained model')
     map = evaluate(test_loader, model)
-    print(f"mAP = {map.item():.3f}")
+    log.open(f"logs/{model.name}_log_train.txt")
+
+    log.write(f"Testing results for: {model_weights_to_use}")
+    log.write(f"\nmAP = {map.item():.3f}")
