@@ -1,0 +1,71 @@
+Using 32 workers | Device: cuda:0
+
+Config: config_7
+n_classes: 192
+img_weight: 224
+img_height: 224
+batch_size: 64
+epochs: 15
+learning_rate: 0.1
+
+------------------------------------- [START 2023-11-26 22:57:53] -----------------------------------------
+
+                                 |----- Train -----|----- Valid -----|----- Valid -----|------------|
+mode         iter        epoch   |       loss      |       loss      |        mAP      |    time    |
+-------------------------------------------------------------------------------------------
+
+train         150          1     |       8.508     |       0.000     |      0.000      |   0 min 45 sec
+val            6          1     |       8.508     |       5.841     |      0.019      |   0 min 14 sec
+train         150          2     |       5.281     |       5.841     |      0.019      |   0 min 35 sec
+val            6          2     |       5.281     |       5.379     |      0.072      |   0 min 13 sec
+train         150          3     |       4.959     |       5.379     |      0.072      |   0 min 35 sec
+val            6          3     |       4.959     |       4.873     |      0.106      |   0 min 13 sec
+train         150          4     |       4.492     |       4.873     |      0.106      |   0 min 36 sec
+val            6          4     |       4.492     |       nan     |      0.067      |   0 min 13 sec
+train         150          5     |       4.220     |       nan     |      0.067      |   0 min 36 sec
+val            6          5     |       4.220     |       7.614     |      0.045      |   0 min 13 sec
+train         150          6     |       3.986     |       7.614     |      0.045      |   0 min 36 sec
+val            6          6     |       3.986     |       5.908     |      0.075      |   0 min 13 sec
+train         150          7     |       3.672     |       5.908     |      0.075      |   0 min 36 sec
+val            6          7     |       3.672     |       5.484     |      0.205      |   0 min 14 sec
+train         150          8     |       3.330     |       5.484     |      0.205      |   0 min 37 sec
+val            6          8     |       3.330     |       5.216     |      0.184      |   0 min 14 sec
+train         150          9     |       2.965     |       5.216     |      0.184      |   0 min 36 sec
+val            6          9     |       2.965     |       4.756     |      0.290      |   0 min 14 sec
+train         150          10     |       2.610     |       4.756     |      0.290      |   0 min 36 sec
+val            6          10     |       2.610     |       4.842     |      0.373      |   0 min 13 sec
+train         150          11     |       2.206     |       4.842     |      0.373      |   0 min 36 sec
+val            6          11     |       2.206     |       4.444     |      0.465      |   0 min 13 sec
+train         150          12     |       1.864     |       4.444     |      0.465      |   0 min 35 sec
+val            6          12     |       1.864     |       3.929     |      0.511      |   0 min 13 sec
+train         150          13     |       1.537     |       3.929     |      0.511      |   0 min 36 sec
+val            6          13     |       1.537     |       4.029     |      0.598      |   0 min 14 sec
+train         150          14     |       1.324     |       4.029     |      0.598      |   0 min 37 sec
+val            6          14     |       1.324     |       3.900     |      0.640      |   0 min 13 sec
+train         150          15     |       1.218     |       3.900     |      0.640      |   0 min 36 sec
+val            6          15     |       1.218     |       3.997     |      0.640      |   0 min 14 sec
+
+Total time elapsed: 12 min 52 sec
+------------Test Results---------------
+
+Using 32 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+------------Test Results---------------
+
+Using 32 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+------------Test Results---------------
+
+Using 32 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+Evaluating trained modelTesting results for: config_7_Knife-Effb0-E15.pt
+mAP = 0.228

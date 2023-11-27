@@ -153,8 +153,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 
-print(f'Using {set_num_workers} workers | Device: {device}\n')
-
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
@@ -169,7 +167,9 @@ val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
 
 log.open(f"logs/{model.name}_log_train_{config_name}.txt")
-log.write(f'Config: {config_name}')
+log.write(f'Using {set_num_workers} workers | Device: {device}\n')
+
+log.write(f'\nConfig: {config_name}\n')
 
 for k, v in config.__dict__.items():
     log.write(f'{k}: {v}\n')
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     plt.xticks(epochs_list)
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/'
+    plt.savefig(f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/{model_name}/'
                 f'{config_name}/train_val_loss_vs_epochs_{config_name}.png')
     plt.show()
 
@@ -239,6 +239,6 @@ if __name__ == '__main__':
     plt.legend()
     plt.grid(True)
     plt.savefig(
-        f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/EfficientNet/'
+        f'/content/drive/MyDrive/GitHub Repos/EEEM066_Knife_Classification_code/result_plots/{model_name}/'
         f'{config_name}/val_map_vs_epochs_{config_name}.png')
     plt.show()
