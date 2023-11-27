@@ -1,0 +1,64 @@
+Using 16 workers | Device: cuda:0
+
+Config: config_2
+n_classes: 192
+img_weight: 224
+img_height: 224
+batch_size: 32
+epochs: 15
+learning_rate: 0.001
+
+------------------------------------- [START 2023-11-27 02:40:46] -----------------------------------------
+
+                                 |----- Train -----|----- Valid -----|----- Valid -----|------------|
+mode         iter        epoch   |       loss      |       loss      |        mAP      |    time    |
+-------------------------------------------------------------------------------------------
+
+train         300          1     |       1.056     |       0.000     |      0.000      |   0 min 40 sec
+val            12          1     |       1.056     |       0.669     |      0.896      |   0 min 10 sec
+train         300          2     |       0.052     |       0.669     |      0.896      |   0 min 32 sec
+val            12          2     |       0.052     |       0.645     |      0.899      |   0 min 09 sec
+train         300          3     |       0.061     |       0.645     |      0.899      |   0 min 32 sec
+val            12          3     |       0.061     |       0.677     |      0.899      |   0 min 08 sec
+train         300          4     |       0.040     |       0.677     |      0.899      |   0 min 32 sec
+val            12          4     |       0.040     |       0.784     |      0.884      |   0 min 10 sec
+train         300          5     |       0.022     |       0.784     |      0.884      |   0 min 33 sec
+val            12          5     |       0.022     |       0.581     |      0.911      |   0 min 09 sec
+train         300          6     |       0.025     |       0.581     |      0.911      |   0 min 33 sec
+val            12          6     |       0.025     |       0.531     |      0.926      |   0 min 09 sec
+train         300          7     |       0.008     |       0.531     |      0.926      |   0 min 32 sec
+val            12          7     |       0.008     |       0.577     |      0.917      |   0 min 09 sec
+train         300          8     |       0.004     |       0.577     |      0.917      |   0 min 33 sec
+val            12          8     |       0.004     |       0.537     |      0.917      |   0 min 09 sec
+train         300          9     |       0.001     |       0.537     |      0.917      |   0 min 33 sec
+val            12          9     |       0.001     |       0.540     |      0.918      |   0 min 10 sec
+train         300          10     |       0.001     |       0.540     |      0.918      |   0 min 33 sec
+val            12          10     |       0.001     |       0.513     |      0.917      |   0 min 09 sec
+train         300          11     |       0.001     |       0.513     |      0.917      |   0 min 33 sec
+val            12          11     |       0.001     |       0.516     |      0.922      |   0 min 10 sec
+train         300          12     |       0.000     |       0.516     |      0.922      |   0 min 33 sec
+val            12          12     |       0.000     |       0.520     |      0.922      |   0 min 09 sec
+train         300          13     |       0.000     |       0.520     |      0.922      |   0 min 33 sec
+val            12          13     |       0.000     |       0.505     |      0.925      |   0 min 09 sec
+train         300          14     |       0.001     |       0.505     |      0.925      |   0 min 33 sec
+val            12          14     |       0.001     |       0.506     |      0.923      |   0 min 09 sec
+train         300          15     |       0.000     |       0.506     |      0.923      |   0 min 33 sec
+val            12          15     |       0.000     |       0.519     |      0.923      |   0 min 09 sec
+
+Total time elapsed: 10 min 54 sec
+------------Test Results---------------
+
+Using 16 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+------------Test Results---------------
+
+Using 16 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+Evaluating trained modelTesting results for: config_2_Knife-Effb0-E15.pt
+mAP = 0.650
