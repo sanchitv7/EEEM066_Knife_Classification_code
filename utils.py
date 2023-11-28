@@ -159,7 +159,7 @@ class ArcFaceLoss(nn.modules.Module):
 
 def get_num_workers():
     if torch.cuda.is_available():
-        return 16
+        return 32
     elif torch.backends.mps.is_available():
         return 0
     else:

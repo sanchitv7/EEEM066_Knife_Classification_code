@@ -166,6 +166,12 @@ start_epoch = 0
 val_metrics = [0, 0]
 scaler = torch.cuda.amp.GradScaler()
 
+if not os.path.exists(f"./result_plots/{model_name}"):
+  os.mkdir(f"./result_plots/{model_name}")
+
+if not os.path.exists(f"./result_plots/{model_name}/{config_name}"):
+  os.mkdir(f"./result_plots/{model_name}/{config_name}")
+
 log.open(f"logs/{model.name}_log_train_{config_name}.txt")
 log.write(f'Using {set_num_workers} workers | Device: {device}\n')
 
@@ -198,7 +204,7 @@ if __name__ == '__main__':
         save_val_map.append(val_metrics[0])
         # Saving the model
         if (epoch + 1) % 5 == 0:
-            filename = f"{config_name}_Knife-Effb0-E" + str(epoch + 1) + ".pt"
+            filename = f"{config_name}_Knife-Resnet50-E" + str(epoch + 1) + ".pt"
             torch.save(model.state_dict(), filename)
 
     log.write(f'\n\nTotal time elapsed: {time_to_str(timer() - training_start, mode="sec")}')
@@ -211,9 +217,6 @@ if __name__ == '__main__':
     epochs_list = list(epochs)  # Convert range object to a list for plt.xticks
 
     '''Plot and save results'''
-
-    if not os.path.exists(f"./result_plots/{model_name}/{config_name}"):
-        os.mkdir(f"./result_plots/{model_name}/{config_name}")
 
     # Plotting training/validation losses vs epochs
     plt.figure(figsize=(10, 6))
