@@ -1,0 +1,8 @@
+
+------------Test Results---------------
+
+Using 32 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
