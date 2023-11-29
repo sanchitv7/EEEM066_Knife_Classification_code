@@ -156,7 +156,9 @@ if torch.backends.mps.is_available():
 model.to(device)
 
 '''----------------------Parameters--------------------------------------'''
-optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
+optimizer = optim.Adam(model.parameters(), 
+lr=config.learning_rate, 
+weight_decay=config.weight_decay)
 scheduler = lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=config.epochs * len(train_loader), eta_min=0,
                                            last_epoch=-1)
 criterion = nn.CrossEntropyLoss().to(device)

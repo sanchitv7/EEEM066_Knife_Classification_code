@@ -1,0 +1,47 @@
+Using 32 workers | Device: cuda:0
+
+Config: config_2
+n_classes: 192
+img_weight: 224
+img_height: 224
+batch_size: 32
+epochs: 10
+learning_rate: 0.0005
+
+------------------------------------- [START 2023-11-28 22:51:12] -----------------------------------------
+
+                                 |----- Train -----|----- Valid -----|----- Valid -----|------------|
+mode         iter        epoch   |       loss      |       loss      |        mAP      |    time    |
+-------------------------------------------------------------------------------------------
+
+train         300          1     |       2.316     |       0.000     |      0.000      |   2 min 46 sec
+val            12          1     |       2.316     |       0.515     |      0.918      |   0 min 39 sec
+train         300          2     |       0.073     |       0.515     |      0.918      |   0 min 43 sec
+val            12          2     |       0.073     |       0.451     |      0.917      |   0 min 10 sec
+train         300          3     |       0.025     |       0.451     |      0.917      |   0 min 43 sec
+val            12          3     |       0.025     |       0.453     |      0.925      |   0 min 10 sec
+train         300          4     |       0.010     |       0.453     |      0.925      |   0 min 43 sec
+val            12          4     |       0.010     |       0.418     |      0.929      |   0 min 10 sec
+train         300          5     |       0.007     |       0.418     |      0.929      |   0 min 43 sec
+val            12          5     |       0.007     |       0.463     |      0.919      |   0 min 10 sec
+train         300          6     |       0.005     |       0.463     |      0.919      |   0 min 43 sec
+val            12          6     |       0.005     |       0.409     |      0.930      |   0 min 10 sec
+train         300          7     |       0.003     |       0.409     |      0.930      |   0 min 43 sec
+val            12          7     |       0.003     |       0.396     |      0.927      |   0 min 10 sec
+train         300          8     |       0.003     |       0.396     |      0.927      |   0 min 43 sec
+val            12          8     |       0.003     |       0.437     |      0.923      |   0 min 10 sec
+train         300          9     |       0.003     |       0.437     |      0.923      |   0 min 43 sec
+val            12          9     |       0.003     |       0.408     |      0.926      |   0 min 10 sec
+train         300          10     |       0.002     |       0.408     |      0.926      |   0 min 43 sec
+val            12          10     |       0.002     |       0.406     |      0.925      |   0 min 10 sec
+
+Total time elapsed: 11 min 34 sec
+------------Test Results---------------
+
+Using 32 workers | Device: cuda:0
+
+reading test file
+Creating test dataloader
+loading trained model
+Evaluating trained modelTesting results for: config_2_Knife-Resnet50-E10.pt
+mAP = 0.664
